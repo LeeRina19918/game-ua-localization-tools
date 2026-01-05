@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+  <string>
+    <id>100</id>
+    <flags>0</flags>
+    <data>Hello &amp; welcome\nSecond line</data>
+  </string>
+  <string>
+    <id>101</id>
+    <data>Tabbed\tvalue</data>
+  </string>
+</root>

@@ -1,17 +1,25 @@
 #!/usr/bin/env python3
-import csv
 import os
 import sys
 import xml.etree.ElementTree as ET
 
 
+def escape_tsv(value: str) -> str:
+    return (
+        value.replace("\\", "\\\\")
+        .replace("\n", "\\n")
+        .replace("\r", "\\r")
+        .replace("\t", "\\t")
+    )
+
+
 def main() -> int:
     if len(sys.argv) != 3:
-        print("Usage: extract_tlk_xml.py <input_xml> <output_csv>", file=sys.stderr)
+        print("Usage: extract_tlk_xml.py <input_xml> <output_tsv>", file=sys.stderr)
         return 1
 
     input_xml = sys.argv[1]
-    output_csv = sys.argv[2]
+    output_tsv = sys.argv[2]
 
     if not os.path.isfile(input_xml):
         print(f"Input file not found: {input_xml}", file=sys.stderr)
@@ -45,16 +53,22 @@ def main() -> int:
         if data_elem is not None and data_elem.text is not None:
             source = data_elem.text
 
-        rows.append([entry_id, flags, source, ""])
+        rows.append([
+            escape_tsv(entry_id),
+            escape_tsv(flags),
+            escape_tsv(source),
+            escape_tsv("")
+        ])
 
     if not rows:
         print("No <string> entries with <id> found.", file=sys.stderr)
         return 1
 
-    os.makedirs(os.path.dirname(output_csv) or ".", exist_ok=True)
-    with open(output_csv, "w", encoding="utf-8", newline="") as handle:
-        writer = csv.writer(handle)
-        writer.writerows(rows)
+    os.makedirs(os.path.dirname(output_tsv) or ".", exist_ok=True)
+    with open(output_tsv, "w", encoding="utf-8", newline="") as handle:
+        handle.write("id\tflags\tsource\ttranslation\n")
+        for row in rows:
+            handle.write("\t".join(row) + "\n")
 
     return 0
 
