@@ -39,7 +39,7 @@
 2. Запустіть команду:
 
    ```bash
-   bash run_apply.sh "input/ВАШ_ФАЙЛ.xml" "locale/ВАШ_ФАЙЛ.uk.tsv" "output/ВАШ_ФАЙЛ.uk.xml"
+   bash run_apply.sh input/ВАШ_ФАЙЛ.xml locale/ВАШ_ФАЙЛ.uk.tsv output/ВАШ_ФАЙЛ.uk.xml
    ```
 
 3. Завантажте `output/ВАШ_ФАЙЛ.uk.xml` з дерева файлів.
