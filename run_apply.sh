@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-INPUT_XML="input/GlobalTlk_tlk.xml"
-INPUT_TSV="locale/uk.tsv"
-OUTPUT_XML="output/GlobalTlk_tlk.uk.xml"
+INPUT_XML="${1:-input/GlobalTlk_tlk.xml}"
+INPUT_TSV="${2:-locale/uk.tsv}"
+OUTPUT_XML="${3:-output/GlobalTlk_tlk.uk.xml}"
 
 if [[ ! -f "$INPUT_XML" ]]; then
   echo "Не знайдено файл $INPUT_XML. Завантажте його у папку input/" >&2

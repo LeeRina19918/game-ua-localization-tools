@@ -20,12 +20,15 @@ def parse_tsv(tsv_path: str):
             line = line.rstrip("\n")
             if line_number == 1:
                 continue
+            if not line:
+                continue
             parts = line.split("\t")
-            if len(parts) != 4:
-                raise ValueError(
-                    f"Line {line_number}: expected 4 columns, found {len(parts)}"
-                )
-            entry_id, flags, source, translation = parts
+            if len(parts) < 3:
+                continue
+            entry_id = parts[0]
+            flags = parts[1] if len(parts) > 1 else ""
+            source = parts[2] if len(parts) > 2 else ""
+            translation = parts[3] if len(parts) > 3 else ""
             rows.append((entry_id, flags, source, translation))
     return rows
 
@@ -53,11 +56,7 @@ def main() -> int:
         print(f"Failed to parse XML: {exc}", file=sys.stderr)
         return 1
 
-    try:
-        rows = parse_tsv(input_tsv)
-    except ValueError as exc:
-        print(f"Failed to parse TSV: {exc}", file=sys.stderr)
-        return 1
+    rows = parse_tsv(input_tsv)
 
     root = tree.getroot()
     strings_by_id = {}
@@ -72,10 +71,12 @@ def main() -> int:
     total_rows = len(rows)
     non_empty_translations = 0
     updates_applied = 0
+    skipped_empty = 0
     missing_ids = []
 
     for entry_id, _flags, _source, translation in rows:
         if translation.strip() == "":
+            skipped_empty += 1
             continue
         non_empty_translations += 1
         string_elem = strings_by_id.get(entry_id)
@@ -93,8 +94,9 @@ def main() -> int:
     tree.write(output_xml, encoding="utf-8", xml_declaration=True)
 
     print(f"TSV rows read: {total_rows}")
-    print(f"Translations provided: {non_empty_translations}")
+    print(f"Rows with non-empty translations: {non_empty_translations}")
     print(f"Entries updated: {updates_applied}")
+    print(f"Skipped empty translations: {skipped_empty}")
     print(f"Missing ids in XML: {len(missing_ids)}")
     if missing_ids:
         print("Missing ids (up to 20): " + ", ".join(missing_ids))
