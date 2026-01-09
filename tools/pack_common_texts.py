@@ -14,7 +14,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import BinaryIO, Dict, List, Tuple
 
-PLACEHOLDER_PATTERN = re.compile(r"%(?:%|[sdifux])")
+PLACEHOLDER_PATTERN = re.compile(
+    r"%(?:%|(?:\d+\$)?[-+#0 ]*(?:\d+|\*)?(?:\.(?:\d+|\*))?[hlLzjt]*[sdifux])"
+)
 
 
 @dataclass
@@ -41,7 +43,7 @@ def parse_binary(path: Path) -> tuple[int, List[Entry]]:
             key_len_bytes = struct.unpack("<H", read_exact(handle, 2))[0]
             key_bytes = read_exact(handle, key_len_bytes)
             try:
-                key = key_bytes.decode("utf-8")
+                key = key_bytes.decode("ascii") 
             except UnicodeDecodeError as exc:
                 raise ValueError(f"Failed to decode key as UTF-8: {exc}") from exc
 
