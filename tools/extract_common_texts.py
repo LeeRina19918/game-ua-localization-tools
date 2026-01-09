@@ -34,7 +34,7 @@ def parse_binary(path: Path) -> tuple[int, List[Entry]]:
             key_len_bytes = struct.unpack("<H", read_exact(handle, 2))[0]
             key_bytes = read_exact(handle, key_len_bytes)
             try:
-                key = key_bytes.decode("utf-8")
+                key = key_bytes.decode("utf-8", errors="replace")
             except UnicodeDecodeError as exc:
                 raise ValueError(f"Failed to decode key as UTF-8: {exc}") from exc
 
@@ -83,7 +83,7 @@ def main() -> int:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     try:
         with output_path.open("w", encoding="utf-8", newline="") as handle:
-            writer = csv.writer(handle, delimiter="\t")
+            writer = csv.writer(handle, delimiter="\t", lineterminator="\n")
             writer.writerow(["id", "flags", "source", "translation"])
             for entry in entries:
                 writer.writerow([entry.key, "1", entry.value, ""])
