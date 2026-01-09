@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-INPUT_FILE="input/GlobalTlk_tlk.xml"
-OUTPUT_FILE="locale/uk.tsv"
+INPUT_FILE="${1:-input/GlobalTlk_tlk.xml}"
+OUTPUT_FILE="${2:-locale/uk.tsv}"
 
 if [[ ! -f "$INPUT_FILE" ]]; then
   echo "Не знайдено файл $INPUT_FILE. Завантажте його у папку input/" >&2
